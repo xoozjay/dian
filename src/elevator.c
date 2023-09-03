@@ -1,12 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #define PTEXT "At: %2d, Time: %3d, User: %d\n"
+#define FILEPATH "level1.2-data.txt"
 
 int readFromFile(char *, int *, int *, int *);
 
 int main(){
 	int from, to, at, time = 0;
-	if(readFromFile("level1.2-data.txt", &from, &to, &at) != 0) {
+	if(readFromFile(FILEPATH, &from, &to, &at) != 0) {
 		puts("ERROR: Read File Failed!");
 		return -1;
 	}
