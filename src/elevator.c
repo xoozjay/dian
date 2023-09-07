@@ -32,15 +32,28 @@ Elevator el_init(){
 int el_update(Elevator el, State state, int current_time, void (*userInHandler)(Elevator, User), void (*userOutHandler)(Elevator, User)){
 	if(el == NULL)
 		return -1;
+
+	int incount = 0, outcount = 0;
+	for(int i = 0; i < el->waiting_users->length; i++){
+		User aload = ar_get(el->waiting_users, i);
+		if(aload->ffloor == el->current_floor){
+			if(!ar_add(el->load_users, aload))
+				break;
+			aload->wtime = current_time - aload->atime;
+			ar_delete(el->waiting_users, i--);
+			if(userInHandler != NULL)
+				userInHandler(el, aload);
+			incount++;
+		}
+	}
+
 	switch(state){
 		case UP:
-		case STILL_UP:
 			if(el->current_floor < el->highest_floor)
 				el->current_floor++;
 			else return -1;
 			break;
 		case DOWN:
-		case STILL_DOWN:
 			if(el->current_floor > el->lowest_floor)
 				el->current_floor--;
 			else return -1;
@@ -52,7 +65,6 @@ int el_update(Elevator el, State state, int current_time, void (*userInHandler)(
 	}
 	current_time++;
 
-	int incount = 0, outcount = 0;
 	for(int i = 0; i < el->load_users->length ; i++){
 		User aload = ar_get(el->load_users, i);
 		if(aload->tfloor == el->current_floor){
@@ -62,18 +74,6 @@ int el_update(Elevator el, State state, int current_time, void (*userInHandler)(
 				userOutHandler(el, aload);
 			user_destroy(aload);
 			outcount++;
-		}
-	}
-	for(int i = 0; i < el->waiting_users->length; i++){
-		User aload = ar_get(el->waiting_users, i);
-		if(aload->ffloor == el->current_floor){
-			if(!ar_add(el->load_users, aload))
-				break;
-			aload->wtime = current_time - aload->atime;
-			ar_delete(el->waiting_users, i--);
-			if(userInHandler != NULL)
-				userInHandler(el, aload);
-			incount++;
 		}
 	}
 	return incount << 16 | outcount;

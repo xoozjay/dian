@@ -2,47 +2,46 @@
 #include "eutil.h"
 #include "elevator.h"
 
-int callUpdate(State* statep, Elevator el, int current_time, bool isListChanged, void (*userInHandler)(Elevator, User), void (*userOutHandler)(Elevator, User), State (*stateHandler)(Elevator, State));
+int callUpdate(State* statep, Elevator el, int current_time, void (*userInHandler)(Elevator, User), void (*userOutHandler)(Elevator, User), State (*stateHandler)(Elevator, State));
 void sortList(ArrayList ar, int start, int end);
 
-void simulate(ArrayList user_data, void (*userInHandler)(Elevator, User), void (*userOutHandler)(Elevator, User), State (*stateHandler)(Elevator, State), void (*postRunHandler)(Elevator, ArrayList, int)){
+void simulate(int elevator_start, ArrayList user_data, void (*userInHandler)(Elevator, User), void (*userOutHandler)(Elevator, User), State (*stateHandler)(Elevator, State), void (*postRunHandler)(Elevator, ArrayList, int)){
 	Elevator el = el_init();
+	el->current_floor = elevator_start;
 	int current_time = 0;
 
 	sortList(user_data, 0, user_data->length - 1);
 
 	int index = 0;
-	State state = IDLE;
+	State state = IDLE, res = 0;
 	while(index < user_data->length){
 		User aload = ar_get(user_data, index);
-		bool isListChanged = false;
-		if(aload->atime == current_time){
-			isListChanged = true;
+		if(aload->atime == current_time || res != 0){
 			ar_add(el->waiting_users, aload);
 			index ++;
 			continue;
 		}
 
-		callUpdate(&state, el, current_time, isListChanged, userInHandler, userOutHandler, stateHandler);
+		res = callUpdate(&state, el, current_time, userInHandler, userOutHandler, stateHandler);
 		current_time++;
 	}
-	while(!(state == IDLE || (ar_isEmpty(el->waiting_users) && ar_isEmpty(el->load_users)))){
-		callUpdate(&state, el, current_time, false, userInHandler, userOutHandler, stateHandler);
+	while(!(ar_isEmpty(el->waiting_users) && ar_isEmpty(el->load_users))){
+		callUpdate(&state, el, current_time, userInHandler, userOutHandler, stateHandler);
 		current_time++;
 	}
 
 	current_time--;
-	postRunHandler(el, user_data, current_time);
+	if(postRunHandler != NULL)
+		postRunHandler(el, user_data, current_time);
 	el_destroy(el);
-	ar_destroy(user_data, true);
+	ar_destroy(user_data, false);
 }
 
-int callUpdate(State* statep, Elevator el, int current_time, bool isListChanged, void (*userInHandler)(Elevator, User), void (*userOutHandler)(Elevator, User), State (*stateHandler)(Elevator, State)){
-	if(isListChanged || !(*statep == STILL_DOWN || *statep == STILL_UP))
-		*statep = stateHandler(el, *statep);
+int callUpdate(State* statep, Elevator el, int current_time, void (*userInHandler)(Elevator, User), void (*userOutHandler)(Elevator, User), State (*stateHandler)(Elevator, State)){
+	*statep = stateHandler(el, *statep);
 	int res = el_update(el, *statep, current_time, userInHandler, userOutHandler);
-	if(res != 0 && (*statep == STILL_DOWN || *statep == STILL_UP))
-		*statep = NUL;
+//	if(res != 0 && (*statep == STILL_DOWN || *statep == STILL_UP))
+//		*statep = NUL;
 	return res;
 }
 

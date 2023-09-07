@@ -142,7 +142,7 @@ void ar_swap(ArrayList ar, int a, int b){
 }
 
 bool ar_isEmpty(ArrayList ar){
-	return ar_getSize(ar) == 0;
+	return ar->length == 0;
 }
 
 void ar_destroy(ArrayList ar, bool destroy_entry){

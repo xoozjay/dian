@@ -1,6 +1,8 @@
 #ifndef _ELEVATOR_H_
 #define _ELEVATOR_H_
 
+#include "eutil.h"
+
 #define ELEVATOR_LOADS_MAX 7
 #define ELEVATOR_LOADS_RATED 4
 #define LOWEST_FLOOR 1
@@ -15,7 +17,7 @@ typedef struct {
 } elevator, *Elevator;
 
 typedef enum el_state {
-	UP, DOWN, IDLE, STILL_UP, STILL_DOWN, NUL
+	UP, DOWN, IDLE
 } State;
 
 Elevator el_init();
