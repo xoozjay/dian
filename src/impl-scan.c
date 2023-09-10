@@ -1,5 +1,6 @@
-#include "elevator.h"
+#include <stdlib.h>
 #include "eutil.h"
+#include "elevator.h"
 
 State scanStateHandler(Elevator el, State previous){
 	switch(previous){

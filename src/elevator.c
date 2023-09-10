@@ -36,10 +36,10 @@ int el_update(Elevator el, State state, int current_time, void (*userInHandler)(
 	int incount = 0, outcount = 0;
 	for(int i = 0; i < el->waiting_users->length; i++){
 		User aload = ar_get(el->waiting_users, i);
+		aload->wtime++;
 		if(aload->ffloor == el->current_floor){
 			if(!ar_add(el->load_users, aload))
 				break;
-			aload->wtime = current_time - aload->atime;
 			ar_delete(el->waiting_users, i--);
 			if(userInHandler != NULL)
 				userInHandler(el, aload);
@@ -67,8 +67,8 @@ int el_update(Elevator el, State state, int current_time, void (*userInHandler)(
 
 	for(int i = 0; i < el->load_users->length ; i++){
 		User aload = ar_get(el->load_users, i);
+		aload->ltime++;
 		if(aload->tfloor == el->current_floor){
-			aload->ltime = current_time - aload->wtime - aload->atime;
 			ar_delete(el->load_users, i--);
 			if(userOutHandler != NULL)
 				userOutHandler(el, aload);

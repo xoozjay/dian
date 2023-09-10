@@ -1,9 +1,8 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include "eutil.h"
 #include "elevator.h"
 
-extern ArrayList stdio_man(int *);
+extern ArrayList stdDataInput(int *);
 extern void stdUserInHandler(Elevator el, User up);
 extern void stdUserOutHandler(Elevator el, User up);
 extern State scanStateHandler(Elevator el, State previous);
@@ -11,7 +10,7 @@ extern void simulate(int elevator_start, ArrayList user_data, void (*userInHandl
 
 int main(){
 	int elevator_start;
-	ArrayList user_data = stdio_man(&elevator_start);
+	ArrayList user_data = stdDataInput(&elevator_start);
 	simulate(elevator_start, user_data, stdUserInHandler, stdUserOutHandler, scanStateHandler, NULL);
 }
 

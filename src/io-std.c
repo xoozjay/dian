@@ -1,5 +1,4 @@
-#include <stdio.h>
-#include <stdbool.h>
+#include <stdlib.h>
 #include "eutil.h"
 #include "elevator.h"
 /*
@@ -10,7 +9,7 @@
  * ...
  */
 
-ArrayList stdio_man(int * elevator_start){
+ArrayList stdDataInput(int * elevator_start){
 	scanf("%d", elevator_start);
 	int atime, ffloor, tfloor;
 	ArrayList ar = ar_newArrayList(6, true);
