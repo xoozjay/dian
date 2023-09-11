@@ -3,7 +3,7 @@
 
 #include "eutil.h"
 
-#define ELEVATOR_LOADS_MAX 7
+#define ELEVATOR_LOADS_MAX 4
 #define ELEVATOR_LOADS_RATED 4
 #define LOWEST_FLOOR 1
 #define HIGHEST_FLOOR 10
@@ -21,6 +21,6 @@ typedef enum el_state {
 } State;
 
 Elevator el_init();
-int el_update(Elevator el, State state, int current_time, void (*userInHandler)(Elevator, User), void (*userOutHandler)(Elevator, User));
+int el_update(Elevator el, State* statep, int current_time, void (*userInHandler)(Elevator, User), void (*userOutHandler)(Elevator, User), State (*stateHandler)(Elevator, State));
 void el_destroy(Elevator);
 #endif

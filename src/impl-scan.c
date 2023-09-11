@@ -5,7 +5,13 @@
 State scanStateHandler(Elevator el, State previous){
 	switch(previous){
 	case IDLE:
-		return UP;
+//		if(ar_isEmpty(el->waiting_users)){
+//			if(ar_isEmpty(el->load_users))
+//				return UP;
+//			return scanStateHandler(el, UP);
+//		}
+//		User aload = ar_get(el->waiting_users, 0);
+//		return aload->ffloor > el->current_floor ? UP : DOWN;
 	case UP:
 		int highest_floor = el->lowest_floor;
 		for(int i = 0; i < el->load_users->length; i++){

@@ -29,7 +29,7 @@ Elevator el_init(){
  * return: lower 16bits indicates users out
  *        higher 16bits indicates users in
  */
-int el_update(Elevator el, State state, int current_time, void (*userInHandler)(Elevator, User), void (*userOutHandler)(Elevator, User)){
+int el_update(Elevator el, State *statep, int current_time, void (*userInHandler)(Elevator, User), void (*userOutHandler)(Elevator, User),  State (*stateHandler)(Elevator, State)){
 	if(el == NULL)
 		return -1;
 
@@ -39,7 +39,8 @@ int el_update(Elevator el, State state, int current_time, void (*userInHandler)(
 		aload->wtime++;
 		if(aload->ffloor == el->current_floor){
 			if(!ar_add(el->load_users, aload))
-				break;
+				continue;
+			aload->ltime = 0;
 			ar_delete(el->waiting_users, i--);
 			if(userInHandler != NULL)
 				userInHandler(el, aload);
@@ -47,7 +48,14 @@ int el_update(Elevator el, State state, int current_time, void (*userInHandler)(
 		}
 	}
 
-	switch(state){
+	*statep = (ar_isEmpty(el->load_users) && ar_isEmpty(el->waiting_users)) ? IDLE : stateHandler(el, *statep);
+	if(*statep != IDLE){
+		if(el->current_floor == el->lowest_floor)
+			*statep = UP;
+		if(el->current_floor == el->highest_floor)
+			*statep = DOWN;
+	}
+	switch(*statep){
 		case UP:
 			if(el->current_floor < el->highest_floor)
 				el->current_floor++;
