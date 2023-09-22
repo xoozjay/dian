@@ -1,11 +1,10 @@
 #include <stdlib.h>
 #include "eutil.h"
-#define ARRAYLIST_EXPANDS 6
 
-ArrayList ar_newArrayList(int initialSize, bool canExpand){
+UserList ar_new(int initialSize, bool canExpand){
 	if(initialSize < 1)
 		return NULL;
-	ArrayList ar = malloc(sizeof(struct arrayList));
+	UserList ar = malloc(sizeof(struct userList));
 	if(ar == NULL)
 		return NULL;
 	User * list = malloc(sizeof(User) * initialSize);
@@ -22,23 +21,18 @@ ArrayList ar_newArrayList(int initialSize, bool canExpand){
 	return ar;
 }
 
-static bool ar_expand(ArrayList ar){
+static bool ar_expand(UserList ar){
 	if(!ar->canExpand)
 		return false;
-	User * list = malloc(sizeof(User) * (ar->size + ARRAYLIST_EXPANDS));
-	if(list == NULL)
+	User * new_list = realloc(ar->list, sizeof(User) * (ar->size + ar->size / 2));
+	if(new_list == NULL)
 		return false;
-	for(int i = ar->size; i < ar->size + ARRAYLIST_EXPANDS; i++)
-		*(list + i) = NULL;
-	for(int i = 0; i < ar->size; i++)
-		*(list + i) = *(ar->list + i);
-	ar->size += ARRAYLIST_EXPANDS;
-	free(ar->list);
-	ar->list = list;
+	ar->list = new_list;
 	return true;
+
 }
 
-bool ar_add(ArrayList ar, User up){
+bool ar_add(UserList ar, User up){
 	if(ar == NULL || up == NULL)
 		return false;
 	if(ar->length == ar->size && !ar_expand(ar))
@@ -93,7 +87,7 @@ void user_destroy(User up){
 	free(up);
 }
 
-bool ar_deleteByValue(ArrayList ar, User up){
+bool ar_deleteByValue(UserList ar, User up){
 	if(ar == NULL)
 		return false;
 	for(int i = 0; i < ar->length; i++){
@@ -104,7 +98,7 @@ bool ar_deleteByValue(ArrayList ar, User up){
 	return false;
 }
 
-bool ar_delete(ArrayList ar, int index){
+bool ar_delete(UserList ar, int index){
 	if(ar == NULL || index >= ar->length || index < 0)
 		return false;
 	ar->length--;
@@ -114,19 +108,19 @@ bool ar_delete(ArrayList ar, int index){
 	return true;
 }
 
-User ar_get(ArrayList ar, int index){
+User ar_get(UserList ar, int index){
 	if(ar == NULL || index >= ar->length || index < 0)
 		return NULL;
 	return *(ar->list + index);
 }
 
-int ar_getSize(ArrayList ar){
+int ar_getSize(UserList ar){
 	if(ar == NULL)
 		return -1;
 	return ar->size;
 }
 
-User ar_set(ArrayList ar, int index, User up){
+User ar_set(UserList ar, int index, User up){
 	if(ar == NULL || index >= ar->length)
 		return NULL;
 	User old = ar_get(ar, index);
@@ -134,18 +128,18 @@ User ar_set(ArrayList ar, int index, User up){
 	return old;
 }
 
-void ar_swap(ArrayList ar, int a, int b){
+void ar_swap(UserList ar, int a, int b){
 	if(ar == NULL || a == b || a >= ar->length || b >= ar->length || a < 0 || b < 0)
 		return;
 	ar_set(ar, b,
 			ar_set(ar, a, ar_get(ar, b)));
 }
 
-bool ar_isEmpty(ArrayList ar){
+bool ar_isEmpty(UserList ar){
 	return ar->length == 0;
 }
 
-void ar_destroy(ArrayList ar, bool destroy_entry){
+void ar_destroy(UserList ar, bool destroy_entry){
 	if(ar == NULL)
 		return;
 	if(destroy_entry)

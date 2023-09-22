@@ -3,9 +3,10 @@
 #include "elevator.h"
 
 //int callUpdate(State* statep, Elevator el, int current_time, void (*userInHandler)(Elevator, User), void (*userOutHandler)(Elevator, User), State (*stateHandler)(Elevator, State));
-void sortList(ArrayList ar, int start, int end);
+void sortList(UserList ar, int start, int end);
 
-void simulate(int elevator_start, ArrayList user_data, void (*userInHandler)(Elevator, User), void (*userOutHandler)(Elevator, User), State (*stateHandler)(Elevator, State), void (*postRunHandler)(Elevator, ArrayList, int)){
+
+void simulate(int elevator_start, UserList user_data, void (*userInHandler)(Elevator, User), void (*userOutHandler)(Elevator, User), int (*stateHandler)(Elevator, Direction), void (*postRunHandler)(Elevator, UserList, int)){
 	Elevator el = el_init();
 	el->current_floor = elevator_start;
 	int current_time = 0;
@@ -13,23 +14,25 @@ void simulate(int elevator_start, ArrayList user_data, void (*userInHandler)(Ele
 	sortList(user_data, 0, user_data->length - 1);
 
 	int index = 0;
-	State state = IDLE;
+	Direction state = IDLE;
 	while(index < user_data->length){
 		// when user_data is not empty
+		// which means a new user presses button
 		User aload = ar_get(user_data, index);
 		if(aload->atime == current_time){
 			//add user
 			ar_add(el->waiting_users, aload);
 			index ++;
-			continue;
+			if(index < user_data->length)
+				continue;
 		}
 
 		//or simulate one step
-		el_update(el, &state, current_time, userInHandler, userOutHandler, stateHandler);
+		el_update(el, &state, userInHandler, userOutHandler, stateHandler, true);
 		current_time++;
 	}
 	while(!(ar_isEmpty(el->waiting_users) && ar_isEmpty(el->load_users))){
-		el_update(el, &state, current_time, userInHandler, userOutHandler, stateHandler);
+		el_update(el, &state, userInHandler, userOutHandler, stateHandler, false);
 		current_time++;
 	}
 
@@ -47,7 +50,7 @@ void simulate(int elevator_start, ArrayList user_data, void (*userInHandler)(Ele
 //	return res;
 //}
 
-void sortList(ArrayList ar, int start, int end){
+void sortList(UserList ar, int start, int end){
 	if(start >= end)
 		return;
 
@@ -64,4 +67,3 @@ void sortList(ArrayList ar, int start, int end){
 	sortList(ar, start, index - 1);
 	sortList(ar, index + 1, end);
 }
-

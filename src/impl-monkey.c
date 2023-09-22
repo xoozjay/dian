@@ -4,6 +4,6 @@
 /*
  * 活跃气氛用
  */
-State monkeyStateHandler(Elevator el, State previous){
-	return (rand() % 2 == 0) ? UP : DOWN;
+int monkeyStateHandler(Elevator el, Direction previous){
+	return (rand() % 2 == 0) ? 1 : -1;
 }

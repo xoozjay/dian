@@ -10,23 +10,23 @@ enum io {
 	STD, FILE
 };
 
-extern ArrayList stdDataInput(int *);
+extern UserList stdDataInput(int *);
 extern void stdUserInHandler(Elevator el, User up);
 extern void stdUserOutHandler(Elevator el, User up);
-extern State scanStateHandler(Elevator el, State previous);
-extern State monkeyStateHandler(Elevator el, State previous);
+extern int scanStateHandler(Elevator el, Direction previous);
+extern int monkeyStateHandler(Elevator el, Direction previous);
 extern int finit(char datafile[], char outfile[]);
-extern ArrayList fdataInput(int * elevator_start);
+extern UserList fdataInput(int * elevator_start);
 extern void fuserInHandler(Elevator el, User up);
 extern void fuserOutHandler(Elevator el, User up);
-extern void simulate(int elevator_start, ArrayList user_data, void (*userInHandler)(Elevator, User), void (*userOutHandler)(Elevator, User), State (*stateHandler)(Elevator, State), void (*postRunHandler)(Elevator, ArrayList, int));
+extern void simulate(int elevator_start, UserList user_data, void (*userInHandler)(Elevator, User), void (*userOutHandler)(Elevator, User), int (*stateHandler)(Elevator, Direction), void (*postRunHandler)(Elevator, UserList, int));
 
 int main(){
 	int elevator_start;
 	void (*userInHandler)(Elevator, User);
 	void (*userOutHandler)(Elevator, User);
-	State (*stateHandler)(Elevator, State);
-	ArrayList (*dataInput)(int *);
+	int (*stateHandler)(Elevator, Direction);
+	UserList (*dataInput)(int *);
 
 	switch(SCAN){ // change algorithm here
 	case SCAN:
@@ -52,6 +52,6 @@ int main(){
 		finit("data.txt", "output.log");
 	}
 
-	ArrayList user_data = dataInput(&elevator_start);
+	UserList user_data = dataInput(&elevator_start);
 	simulate(elevator_start, user_data, userInHandler, userOutHandler, stateHandler, NULL);
 }

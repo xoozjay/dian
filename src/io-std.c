@@ -10,10 +10,10 @@
  * ...
  */
 
-ArrayList stdDataInput(int * elevator_start){
+UserList stdDataInput(int * elevator_start){
 	scanf("%d", elevator_start);
 	int atime, ffloor, tfloor;
-	ArrayList ar = ar_newArrayList(6, true);
+	UserList ar = ar_new(6, true);
 	while(scanf("%d %d %d", &ffloor, &tfloor, &atime) == 3){
 		User up = user_new(atime, ffloor, tfloor);
 		ar_add(ar, up);
