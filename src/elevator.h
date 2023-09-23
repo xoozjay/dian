@@ -3,7 +3,7 @@
 
 #include "eutil.h"
 
-#define ELEVATOR_LOADS_MAX 7
+#define ELEVATOR_LOADS_MAX 6
 #define ELEVATOR_LOADS_RATED 4
 #define LOWEST_FLOOR 1
 #define HIGHEST_FLOOR 10

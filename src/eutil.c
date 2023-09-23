@@ -24,10 +24,12 @@ UserList ar_new(int initialSize, bool canExpand){
 static bool ar_expand(UserList ar){
 	if(!ar->canExpand)
 		return false;
-	User * new_list = realloc(ar->list, sizeof(User) * (ar->size + ar->size / 2));
+	int new_size = ar->size + ar->size / 2 + 1;
+	User * new_list = realloc(ar->list, sizeof(User) * new_size);
 	if(new_list == NULL)
 		return false;
 	ar->list = new_list;
+	ar->size = new_size;
 	return true;
 
 }

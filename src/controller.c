@@ -2,6 +2,8 @@
 #include "eutil.h"
 #include "elevator.h"
 
+#include <stdio.h>
+
 //int callUpdate(State* statep, Elevator el, int current_time, void (*userInHandler)(Elevator, User), void (*userOutHandler)(Elevator, User), State (*stateHandler)(Elevator, State));
 void sortList(UserList ar, int start, int end);
 
@@ -12,6 +14,9 @@ void simulate(int elevator_start, UserList user_data, void (*userInHandler)(Elev
 	int current_time = 0;
 
 	sortList(user_data, 0, user_data->length - 1);
+	for(int i = 0; i < user_data->length; i ++){
+		printf("%d+%d ", ar_get(user_data, i)->ffloor, ar_get(user_data, i)->atime);
+	}
 
 	int index = 0;
 	Direction state = IDLE;
