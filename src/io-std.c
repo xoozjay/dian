@@ -22,9 +22,9 @@ UserList stdDataInput(int * elevator_start){
 }
 
 void stdUserInHandler(Elevator el, User up){
-	printf("User In  At:%2d Time:%2d Loads:%d\n", el->current_floor, up->wtime + up->atime, el->load_users->length);
+	printf("User In  At:%2d Time:%2d Loads:%d Elevator%#lX\n", el->current_floor, up->wtime + up->atime, el->load_users->length,(unsigned long) el);
 }
 
 void stdUserOutHandler(Elevator el, User up){
-	printf("User Out At:%2d Time:%2d Loads:%d\n", el->current_floor, up->wtime + up->atime + up->ltime, el->load_users->length);
+	printf("User Out At:%2d Time:%2d Loads:%d Elevator%#lX\n", el->current_floor, up->wtime + up->atime + up->ltime, el->load_users->length,(unsigned long) el);
 }
